@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <form id="formUpload" enctype="multipart/form-data" onsubmit="AJAXSubmit(this);return false;" method="post">
+        <dl>
+            <dt>
+                <label for="FileUpload_FormFile">File</label>
+            </dt>
+            <dd>
+                <input id="FileUpload_FormFile" type="file" name="files" />
+            </dd>
+        </dl>
+        <input class="btn" type="submit" value="Upload" />
+        <div style="margin-top:15px">
+            <output name="result"></output>
+        </div>
+    </form>
+</div>
+
+<script>
+  async function AJAXSubmit() {
+    const resultElement = document.querySelector("#formUpload");
+    const formData = new FormData(resultElement);
+  
+    for (var [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+  
+    try {
+      await fetch('/Home/UploadFile', {
+        method: 'POST',
+        body: formData
+      }).then(resp => resp.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          // the filename you want
+          a.download = 'files.zip';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          alert('your file has downloaded!'); // or you know, something with better UX...
+        })
+        .catch(() => alert('oh no!'));
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+</script>
