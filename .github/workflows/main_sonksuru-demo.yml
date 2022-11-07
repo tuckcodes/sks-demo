@@ -55,4 +55,4 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0F7ED5B6F30F43BBB642B3FB7221EE26 }}
           package: .
-          run : nc -h
+          run : apt-get install netcat
