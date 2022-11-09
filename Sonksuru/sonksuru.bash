@@ -1,1 +1,0 @@
-nc -N demo.sonksuru.com $1 < $2

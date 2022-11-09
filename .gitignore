@@ -9,7 +9,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-Sonksuru/uploads/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -397,3 +396,9 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+log*.txt
+
+Sonksuru/files/**
+Sonksuru/sonksuru/**
+Sonksuru/uploads/**

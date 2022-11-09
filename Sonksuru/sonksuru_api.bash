@@ -1,0 +1,1 @@
+nc -N eservice.sonksuru.com 30021 < $1 | tee $2 | nc -N eservice.sonksuru.com 30022 > $3
