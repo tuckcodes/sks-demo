@@ -7,7 +7,7 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 try
 {
@@ -24,7 +24,6 @@ try
 
     app.UseSerilogRequestLogging();
 
-    app.UseHttpsRedirection();
     app.UseStaticFiles();
 
     app.UseRouting();

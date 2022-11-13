@@ -18,16 +18,26 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
+    public ViewResult Index()
     {
         return View();
     }
 
     [HttpPost]
-    public async Task<FileContentResult> UploadFile(
+    public async Task<IActionResult> UploadFile(
         List<IFormFile> files,
         CancellationToken cancellationToken)
     {
+        if (files.Any(f => f.ContentType != "text/plain"))
+        {
+            return BadRequest("Only txt files allowed.");
+        }
+
+        if (files.Any(f => f.Length > 2000000))
+        {
+            return BadRequest("Max 2mb size allowed.");
+        }
+
         var directory = CreateDirectory("uploads");
         using var memoryStream = new MemoryStream();
         using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
@@ -39,7 +49,8 @@ public class HomeController : Controller
 
                 //var trustedFileNameForDisplay = WebUtility.HtmlEncode(untrustedFileName);
                 var trustedFileNameForFileStorage = Path.GetRandomFileName();
-                var path = Path.Combine(directory, trustedFileNameForFileStorage);
+                var fileName = Path.GetFileNameWithoutExtension(trustedFileNameForFileStorage) + filePathExtension;
+                var path = Path.Combine(directory, fileName);
 
                 await using (var fs = SystemFile.Create(path, 4096, FileOptions.Asynchronous))
                 {
@@ -75,9 +86,10 @@ public class HomeController : Controller
     {
         try
         {
+            var extension = Path.GetExtension(filePath);
             var basePath = CreateDirectory("files");
-            var encryptedFileOutPath = Path.Combine(basePath, "encryptedFile");
-            var decryptedFileOutPath = Path.Combine(basePath, "decryptedFile");
+            var encryptedFileOutPath = Path.Combine(basePath, $"encryptedFile{extension}");
+            var decryptedFileOutPath = Path.Combine(basePath, $"decryptedFile{extension}");
 
             _logger.LogInformation("Starting encryption");
             await RunCommandAsync($"sonksuru_api.bash {filePath} {encryptedFileOutPath} {decryptedFileOutPath}", cancellationToken);
